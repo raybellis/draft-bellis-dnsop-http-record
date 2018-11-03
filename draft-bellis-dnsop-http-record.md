@@ -62,9 +62,10 @@ the performance impact of the additional DNS lookup an SRV record
 would typically require.
 
 To achieve equivalent end-user performance as existing CNAME-based
-solutions, this document permits (but does not mandate) recursive
-resolvers to pre-emptively look up the target of an HTTP Record and
-return the corresponding records to the client.
+solutions, this document permits recursive resolvers to pre-emptively
+look up the target of an HTTP Record and return the corresponding
+records to the client.  While this feature is not mandatory it is hoped
+that support would over time become near ubiquitous.
 
 Also, the presence of the Port field in an SRV record is incompatible
 with the "Same Origin" security policy enforced by web browsers and in
