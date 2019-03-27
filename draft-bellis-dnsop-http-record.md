@@ -1,6 +1,6 @@
 ---
 title: A DNS Resource Record for HTTP
-docname: draft-bellis-dnsop-http-record
+docname: draft-bellis-dnsop-http-record-00
 
 ipr: trust200902
 area: Internet
@@ -94,7 +94,7 @@ capitals, as shown here.
 The owner name of an HTTP RR is the domain name portion of an HTTP(s) URI.
 
 The use of underscore label prefixes (e.g. _http._tcp) was considered,
-but rejected since it prohibits the use of wildcard records which us a
+but rejected since it prohibits the use of wildcard records which is a
 valuable technique for offering per-customer domain prefixes without
 requiring that every prefix be individually provisioned.
 
@@ -109,19 +109,22 @@ master file format.
 
 ## Server Operation
 
-Recursive resolvers MAY on receiving a request for an HTTP record look
-up the A and AAAA records for the target (either from cache, or via new
-iterative queries) and include the results in the Additional Section of
-the response.
+A recursive resolve that supports this specification SHOULD on receipt
+of a request for an HTTP record look up the A and AAAA records for the
+target (either from cache, or via new iterative queries) and include the
+results in the Additional Section of the response.
 
-If the recursive resolver is performing DNSSEC resolution but is unable
-to validate the A or AAAA responses it MUST NOT include them in the
-response unless the client has specified the +CD (checking disabled)
-flag.
+If the recursive resolver is DNSSEC-enabled and the A and/or AAAA
+records are deemed "bogus" then it MUST NOT include them in the response
+unless the client has specified the +CD (checking disabled) flag.
 
 Where EDNS Client Subnet {{?RFC7871}} is configured on the resolver those
 A and AAAA lookups MUST be performed as if the client had made those
 queries directly to the resolver.
+
+Authoritative zone provisioning systems MAY automatically synthesize the
+corresponding A and AAAA records associated with an HTTP record so that
+they do not need to be explicitly configured.
 
 ## Client Operation
 
@@ -135,14 +138,18 @@ further parallel requests for the A and AAAA records corresponding to
 the domain name in the RDATA of the HTTP record and then use those
 IP addresses to access the URI.
 
-If the original A and AAAA lookups return IP addresses these MUST only
-be used if no HTTP record is returned.
+If the client's original A and AAAA lookups return IP addresses these
+MUST only be used if no HTTP record is returned.
 
 << the above needs more text around timing, happy eyeballs, etc. >>
 
 # Security Considerations {#security}
 
-TBD
+The ranking order rules from section 5.4.1 of {{!RFC2181}} MUST be
+observed at all times.  In particular, the A and AAAA records returned
+in the Additional Section of an answer MUST NOT overwrite cached records
+that were previously returned in the Answer Section of an authoritative
+answer.
 
 # Implementation status {#impstatus}
 
